@@ -1,0 +1,14 @@
+{
+  "name": "2025-client-e2e",
+  "version": "1.0.0",
+  "main": "",
+  "scripts": {
+    "test": "cypress"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^14.3.2"
+  }
+}
