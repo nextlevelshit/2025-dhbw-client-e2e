@@ -1,3 +1,3 @@
 module.exports = {
-    commands: require("./commands.js"),
+  commands: require("./commands.js"),
 };

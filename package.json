@@ -1,14 +1,16 @@
 {
-  "name": "2025-client-e2e",
+  "name": "cypress-e2e-learning",
   "version": "1.0.0",
-  "main": "",
+  "type": "module",
   "scripts": {
-    "test": "cypress"
+    "open": "cypress open",
+    "test": "cypress run",
+    "format": "npx prettier --write '**/*.{js,mjs,json,md,html}'"
   },
-  "author": "",
+  "author": "Michael",
   "license": "ISC",
-  "description": "",
+  "description": "Learning Cypress E2E testing with modern ES6 patterns",
   "devDependencies": {
-    "cypress": "^14.3.2"
+    "cypress": "^13.6.0"
   }
 }
