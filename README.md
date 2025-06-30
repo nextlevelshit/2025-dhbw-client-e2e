@@ -28,6 +28,14 @@ cypress/
 └── cypress.config.js         # ES6 configuration
 ```
 
+## Key Characteristics
+
+- **Real browser** - actual Chromium/Firefox instance
+- **Real DOM** - genuine user interactions (clicks, typing, scrolling)
+- **Real rendering** - CSS, JavaScript, async operations
+- **Cross-origin requests** - client ↔ server communication
+- **User perspective** - exactly what users see and do
+
 ## Key Patterns
 
 ### 1. Modern ES6 Configuration
