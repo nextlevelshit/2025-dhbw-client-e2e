@@ -33,9 +33,15 @@ Cypress.Commands.add("acceptCookies", () => {
 /**
  * Allways parse JSON correctly to string without replacing special character sequences.
  */
-Cypress.Commands.overwrite("type", (cyType, subject, text, options) => {
-  return cyType(subject, text, {
-    parseSpecialCharSequences: false,
-    ...options,
-  });
-});
+Cypress.Commands.add(
+  "typeJson",
+  {
+    prevSubject: true,
+  },
+  (subject, text, options = {}) => {
+    cy.get(subject).type(text, {
+      parseSpecialCharSequences: false,
+      ...options,
+    });
+  },
+);

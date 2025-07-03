@@ -34,7 +34,7 @@ describe("Node Cache API GUI Tests", () => {
       // First create some test data
       const testData = { test: "data", created: Date.now() };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       // Wait for creation to complete
@@ -53,7 +53,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create test data first
       const testData = { payload: "test_fetch_single", meta: { test: true } };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       // Extract the generated key from the response
@@ -66,7 +66,7 @@ describe("Node Cache API GUI Tests", () => {
           const generatedKey = keyMatch[1];
 
           // Now fetch the item
-          cy.get("#getKey").type(generatedKey);
+          cy.get("#getKey").typeJson(generatedKey);
           cy.get("button").contains("Fetch Item").click();
 
           cy.get("#getResponse")
@@ -83,7 +83,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should handle key not found error", () => {
       const nonexistentKey = "9999999999999";
 
-      cy.get("#getKey").type(nonexistentKey);
+      cy.get("#getKey").typeJson(nonexistentKey);
       cy.get("button").contains("Fetch Item").click();
 
       cy.get("#getResponse")
@@ -105,7 +105,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create test data first
       const testData = { test: "enter_key_test" };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click({ force: true });
 
       cy.get("#postResponse")
@@ -116,7 +116,7 @@ describe("Node Cache API GUI Tests", () => {
           const generatedKey = keyMatch[1];
 
           // Test Enter key functionality
-          cy.get("#getKey").type(generatedKey);
+          cy.get("#getKey").typeJson(generatedKey);
           cy.get("button").contains("Fetch Item").click();
 
           cy.get("#getResponse")
@@ -133,7 +133,7 @@ describe("Node Cache API GUI Tests", () => {
         meta: { created: new Date().toISOString() },
       };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       cy.get("#postResponse")
@@ -154,7 +154,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should handle invalid JSON gracefully", () => {
       const invalidJson = '{"invalid": json}';
 
-      cy.get("#postData").type(invalidJson);
+      cy.get("#postData").typeJson(invalidJson);
       cy.get("button").contains("Create Item").click();
 
       cy.get("#postResponse")
@@ -185,12 +185,12 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should create multiple items with unique keys", () => {
       // Create first item
-      cy.get("#postData").type('{"item": "first"}');
+      cy.get("#postData").typeJson('{"item": "first"}');
       cy.get("button").contains("Create Item").click();
       cy.get("#postResponse").should("contain", "Item created successfully");
 
       // Create second item
-      cy.get("#postData").type('{"item": "second"}');
+      cy.get("#postData").typeJson('{"item": "second"}');
       cy.get("button").contains("Create Item").click();
       cy.get("#postResponse").should("contain", "Item created successfully");
 
@@ -207,7 +207,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create initial data
       const originalData = { message: "original", created: Date.now() };
 
-      cy.get("#postData").type(JSON.stringify(originalData));
+      cy.get("#postData").typeJson(JSON.stringify(originalData));
       cy.get("button").contains("Create Item").click();
 
       cy.get("#postResponse")
@@ -220,8 +220,8 @@ describe("Node Cache API GUI Tests", () => {
           // Update the item
           const updatedData = { message: "updated", modified: Date.now() };
 
-          cy.get("#updateKey").type(generatedKey);
-          cy.get("#updateData").type(JSON.stringify(updatedData));
+          cy.get("#updateKey").typeJson(generatedKey);
+          cy.get("#updateData").typeJson(JSON.stringify(updatedData));
           cy.get("button").contains("Update Item").click();
 
           cy.get("#updateResponse")
@@ -236,7 +236,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create test data
       const testData = { payload: "load_test", meta: { test: true } };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       cy.get("#postResponse")
@@ -247,7 +247,7 @@ describe("Node Cache API GUI Tests", () => {
           const generatedKey = keyMatch[1];
 
           // Load data for update
-          cy.get("#updateKey").type(generatedKey);
+          cy.get("#updateKey").typeJson(generatedKey);
           cy.get("button").contains("Load Selected Key").click();
 
           cy.get("#updateResponse")
@@ -263,7 +263,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should handle key not found on load", () => {
       const nonexistentKey = "9999999999999";
 
-      cy.get("#updateKey").type(nonexistentKey);
+      cy.get("#updateKey").typeJson(nonexistentKey);
       cy.get("button").contains("Load Selected Key").click();
 
       cy.get("#updateResponse")
@@ -282,7 +282,7 @@ describe("Node Cache API GUI Tests", () => {
         .and("contain", "Please enter a key to update");
 
       // Try to update without data
-      cy.get("#updateKey").type("123456789");
+      cy.get("#updateKey").typeJson("123456789");
       cy.get("button").contains("Update Item").click();
 
       cy.get("#updateResponse")
@@ -315,7 +315,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create test data first
       const testData = { test: "enter_load_test" };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       cy.get("#postResponse")
@@ -326,7 +326,7 @@ describe("Node Cache API GUI Tests", () => {
           const generatedKey = keyMatch[1];
 
           // Test Enter key for loading
-          cy.get("#updateKey").type(`${generatedKey}{enter}`);
+          cy.get("#updateKey").typeJson(`${generatedKey}{enter}`);
 
           cy.get("#updateResponse")
             .should("be.visible")
@@ -338,7 +338,7 @@ describe("Node Cache API GUI Tests", () => {
   describe("📊 Cache Management", () => {
     it("should display cache statistics", () => {
       // Create some test data
-      cy.get("#postData").type('{"stats": "test"}');
+      cy.get("#postData").typeJson('{"stats": "test"}');
       cy.get("button").contains("Create Item").click();
       cy.get("#postResponse").should("contain", "Item created successfully");
 
@@ -353,7 +353,7 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should clear cache with confirmation", () => {
       // Create test data
-      cy.get("#postData").type('{"clear": "test"}');
+      cy.get("#postData").typeJson('{"clear": "test"}');
       cy.get("button").contains("Create Item").click();
 
       // Confirm cache has data
@@ -379,7 +379,7 @@ describe("Node Cache API GUI Tests", () => {
 
     it.skip("should cancel cache clear on user rejection", () => {
       // Create test data
-      cy.get("#postData").type('{"cancel": "test"}');
+      cy.get("#postData").typeJson('{"cancel": "test"}');
       cy.get("button").contains("Create Item").click();
 
       // Stub confirmation to return false
@@ -429,7 +429,7 @@ describe("Node Cache API GUI Tests", () => {
       // Create test data
       const testData = { clickable: "test" };
 
-      cy.get("#postData").type(JSON.stringify(testData));
+      cy.get("#postData").typeJson(JSON.stringify(testData));
       cy.get("button").contains("Create Item").click();
 
       // Fetch all keys to make them clickable
@@ -448,7 +448,7 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should auto-load keys on page load", () => {
       // Create some data first
-      cy.get("#postData").type('{"auto": "load"}');
+      cy.get("#postData").typeJson('{"auto": "load"}');
       cy.get("button").contains("Create Item").click();
 
       // Reload page to test auto-load
@@ -465,7 +465,7 @@ describe("Node Cache API GUI Tests", () => {
   describe("🚨 Error Scenarios", () => {
     it("should handle server errors gracefully", () => {
       // Test with malformed JSON to trigger server error
-      cy.get("#getKey").type("invalid_key_format_!@#$%");
+      cy.get("#getKey").typeJson("invalid_key_format_!@#$%");
       cy.get("button").contains("Fetch Item").click();
 
       cy.get("#getResponse").should("be.visible").and("have.class", "error");
@@ -474,7 +474,7 @@ describe("Node Cache API GUI Tests", () => {
     it.skip("should handle very large keys", () => {
       const largeKey = "a".repeat(1000);
 
-      cy.get("#getKey").type(largeKey);
+      cy.get("#getKey").typeJson(largeKey);
       cy.get("button").contains("Fetch Item").click();
 
       cy.get("#getResponse").should("be.visible").and("have.class", "error");
@@ -483,7 +483,7 @@ describe("Node Cache API GUI Tests", () => {
     it.skip("should handle very large data payloads", () => {
       const largeData = { huge: "x".repeat(10000) };
 
-      cy.get("#postData").type(JSON.stringify(largeData));
+      cy.get("#postData").typeJson(JSON.stringify(largeData));
       cy.get("button").contains("Create Item").click();
 
       // Should either succeed or fail gracefully

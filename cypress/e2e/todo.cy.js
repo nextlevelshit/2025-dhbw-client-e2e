@@ -4,11 +4,8 @@ describe("TodoMVC Learning", () => {
   });
 
   it("should add and complete todos", () => {
-    // TODO: Add a new todo
-    // cy.get('[data-testid=text-input]').type('Learn Cypress{enter}');
-    // TODO: Mark it as complete
-    // cy.get('[data-testid=todo-item-toggle]').click();
-    // TODO: Assert it's crossed out
-    // cy.get('[data-testid=todo-item]').should('have.class', 'completed');
+    cy.get("[data-testid=text-input]").type("Learn Cypress{enter}");
+    cy.get("[data-testid=todo-item-toggle]").click();
+    cy.get("[data-testid=todo-item]").should("have.class", "completed");
   });
 });
