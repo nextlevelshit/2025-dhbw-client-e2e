@@ -1,26 +1,18 @@
 describe("Hacking chess.com", () => {
   beforeEach(() => {
+    // Clear cookies and local storage for reproducible state
+    cy.clearAllCookies();
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     // Visit website
-    cy.visit("/home");
-    // Accecpt cookies and other stuff
-    cy.get(".language-banner-close > .icon-font-chess").click();
-    cy.get("#onetrust-reject-all-handler").click();
+    cy.visit("https://www.chess.com/play/online");
+    // Accecpt cookies
+    cy.get("#onetrust-reject-all-handler", { timeout: 10_000 }).click();
   });
 
-  it("Sample login", () => {
-    cy.fixture("credentials").then((credentials) => {
-      cy.get("#login-username").type(credentials.email);
+  it("Initiate new game", () => {
+    cy.get(".new-game-primary > button").click();
 
-      // Pause the test to inspect the state
-      cy.pause();
-
-      cy.get("#login-password").type(credentials.password);
-
-      cy.get("#login").should("be.visible");
-    });
-  });
-
-  it.skip("Sign up account", () => {
-    cy.get(".login-is-new").click();
+    cy.get("#guest-button", { timeout: 10_000 }).click();
   });
 });
