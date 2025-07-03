@@ -2,6 +2,10 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   e2e: {
+    env: {
+      // Set environment variables for tests
+      API_BASE_URL: "http://localhost:3000/api",
+    },
     baseUrl: "https://www.chess.com",
     viewportWidth: 1280,
     viewportHeight: 720,
