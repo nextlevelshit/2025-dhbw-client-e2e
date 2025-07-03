@@ -14,12 +14,6 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // TODO: Add custom tasks here
       // on('task', { ... })
-      on("task", {
-        log(message) {
-          console.log(message);
-          return null; // Cypress requires a return value
-        },
-      });
     },
 
     // Disable video recording for faster local development

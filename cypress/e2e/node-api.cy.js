@@ -1,7 +1,7 @@
 // cypress/e2e/node-api.cy.js
 
 describe("Node Cache API GUI Tests", () => {
-  const API_URL = Cypress.env("API_URL");
+  const API_BASE_URL = Cypress.env("API_BASE_URL");
   const GUI_URL = "https://nextlevelshit.github.io/node-cache-api/";
 
   beforeEach(() => {
@@ -19,18 +19,21 @@ describe("Node Cache API GUI Tests", () => {
 
   describe.only("🗂️ GET Operations", () => {
     it.only("should fetch all keys successfully", () => {
-      // Intercept the API call
-      cy.intercept("GET", `${API_URL}`).as("getAllKeys");
+      // NOTE: Possible debugging step
+      // cy.log("process.env.API_URL", API_BASE_URL);
+      // cy.pause();
+      // cy.debug();
+      // console.log();
 
-      cy.log(API_URL);
-      cy.pause({ log: false });
+      // Intercept the API call
+      cy.intercept("GET", API_BASE_URL).as("getAllKeys");
 
       // Click fetch all keys button
       cy.get("button").contains("Fetch All Keys").click();
 
       // Wait for API response
       cy.wait("@getAllKeys").then(({ response }) => {
-        expect(response.statusCode).to.equal(200);
+        expect(response.statusCode).to.eq(200);
         expect(response.body).to.have.property("keys");
         expect(response.body.keys).to.be.an("array");
       });
@@ -39,9 +42,9 @@ describe("Node Cache API GUI Tests", () => {
       cy.get("#keysResponse").should("be.visible").and("have.class", "success");
     });
 
-    it("should handle empty cache gracefully", () => {
+    it.only("should handle empty cache with mocked request gracefully", () => {
       // Mock empty response
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [] },
       }).as("getEmptyKeys");
@@ -50,8 +53,8 @@ describe("Node Cache API GUI Tests", () => {
       cy.wait("@getEmptyKeys");
 
       cy.get("#keysResponse")
-        .should("be.visible")
-        .and("contain", "Cache is empty 🗑️");
+          .should("be.visible")
+          .and("contain", "Cache is empty 🗑️");
     });
 
     it("should fetch single item successfully", () => {
@@ -62,7 +65,7 @@ describe("Node Cache API GUI Tests", () => {
       };
 
       // Mock successful single item response
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: testData,
       }).as("getSingleItem");
@@ -88,7 +91,7 @@ describe("Node Cache API GUI Tests", () => {
       const nonexistentKey = "9999999999999"; // Timestamp that doesn't exist
 
       // Mock 404 response
-      cy.intercept("GET", `${API_URL}/${nonexistentKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${nonexistentKey}`, {
         statusCode: 404,
         body: { error: "Key not found" },
       }).as("getNotFound");
@@ -124,13 +127,13 @@ describe("Node Cache API GUI Tests", () => {
       const generatedKey = Date.now().toString(); // API generates timestamp keys
 
       // Mock successful creation
-      cy.intercept("POST", `${API_URL}`, {
+      cy.intercept("POST", API_BASE_URL, {
         statusCode: 200,
         body: { key: generatedKey, data: testData },
       }).as("createItem");
 
       // Mock keys refresh after creation
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [generatedKey] },
       }).as("refreshKeys");
@@ -194,7 +197,7 @@ describe("Node Cache API GUI Tests", () => {
       const testData = { test: "data" };
 
       // Mock server error
-      cy.intercept("POST", `${API_URL}`, {
+      cy.intercept("POST", API_BASE_URL, {
         statusCode: 500,
         body: "Internal Server Error",
       }).as("createError");
@@ -220,13 +223,13 @@ describe("Node Cache API GUI Tests", () => {
       };
 
       // Mock successful update
-      cy.intercept("PUT", `${API_URL}/${testKey}`, {
+      cy.intercept("PUT", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: { key: testKey, data: updatedData },
       }).as("updateItem");
 
       // Mock GET request for verification (when GET key field matches)
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: updatedData,
       }).as("verifyUpdate");
@@ -256,7 +259,7 @@ describe("Node Cache API GUI Tests", () => {
       };
 
       // Mock GET request for loading
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: existingData,
       }).as("loadData");
@@ -279,7 +282,7 @@ describe("Node Cache API GUI Tests", () => {
       const nonexistentKey = "9999999999999";
 
       // Mock 404 response
-      cy.intercept("GET", `${API_URL}/${nonexistentKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${nonexistentKey}`, {
         statusCode: 404,
       }).as("loadNotFound");
 
@@ -340,7 +343,7 @@ describe("Node Cache API GUI Tests", () => {
         keys: ["1751559870911", "1751559870912", "1751559870913"],
       };
 
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: mockStats,
       }).as("getStats");
@@ -359,13 +362,13 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should clear cache with confirmation", () => {
       // Mock successful cache clear
-      cy.intercept("DELETE", `${API_URL}`, {
+      cy.intercept("DELETE", API_BASE_URL, {
         statusCode: 200,
         body: { message: "Cache cleared" },
       }).as("clearCache");
 
       // Mock empty keys after clear
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [] },
       }).as("refreshAfterClear");
@@ -407,31 +410,31 @@ describe("Node Cache API GUI Tests", () => {
       const updatedData = { message: "updated", modified: Date.now() };
 
       // Mock CREATE - API generates the key
-      cy.intercept("POST", `${API_URL}`, {
+      cy.intercept("POST", API_BASE_URL, {
         statusCode: 200,
         body: { key: testKey, data: originalData },
       }).as("crudCreate");
 
       // Mock READ operations
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: originalData,
       }).as("crudRead");
 
       // Mock UPDATE
-      cy.intercept("PUT", `${API_URL}/${testKey}`, {
+      cy.intercept("PUT", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: { key: testKey, data: updatedData },
       }).as("crudUpdate");
 
       // Mock verification READ - return updated data
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: updatedData,
       }).as("crudVerify");
 
       // Mock keys refresh
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [testKey] },
       }).as("crudRefresh");
@@ -463,31 +466,31 @@ describe("Node Cache API GUI Tests", () => {
       };
 
       // Mock initial state
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [] },
       }).as("initialState");
 
       // Mock POST
-      cy.intercept("POST", `${API_URL}`, {
+      cy.intercept("POST", API_BASE_URL, {
         statusCode: 200,
         body: { key: testKey },
       }).as("quickPost");
 
       // Mock GET
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: testData,
       }).as("quickGet");
 
       // Mock final state
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [testKey] },
       }).as("finalState");
 
       // Mock keys refresh
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [testKey] },
       }).as("quickRefresh");
@@ -513,7 +516,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should support Enter key for GET operations", () => {
       const testKey = "1751559870911";
 
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: { test: "data" },
       }).as("enterKeyGet");
@@ -528,7 +531,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should support Enter key for loading update data", () => {
       const testKey = "1751559870911";
 
-      cy.intercept("GET", `${API_URL}/${testKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${testKey}`, {
         statusCode: 200,
         body: { existing: "data" },
       }).as("enterKeyLoad");
@@ -543,7 +546,7 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should auto-load keys on page load", () => {
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: ["1751559870911"] },
       }).as("autoLoad");
@@ -562,13 +565,13 @@ describe("Node Cache API GUI Tests", () => {
       const clickableKey = "1751559870911";
 
       // Mock keys with clickable key
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: { keys: [clickableKey] },
       }).as("getClickableKeys");
 
       // Mock GET for selected key
-      cy.intercept("GET", `${API_URL}/${clickableKey}`, {
+      cy.intercept("GET", `${API_BASE_URL}/${clickableKey}`, {
         statusCode: 200,
         body: {
           payload: "test_data_1751559870886",
@@ -594,7 +597,7 @@ describe("Node Cache API GUI Tests", () => {
   describe("🚨 Error Scenarios", () => {
     it("should handle network errors gracefully", () => {
       // Force network error
-      cy.intercept("GET", `${API_URL}`, { forceNetworkError: true }).as(
+      cy.intercept("GET", API_BASE_URL, { forceNetworkError: true }).as(
         "networkError",
       );
 
@@ -610,7 +613,7 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should handle server timeouts", () => {
       // Mock slow response
-      cy.intercept("GET", `${API_URL}`, (req) => {
+      cy.intercept("GET", API_BASE_URL, (req) => {
         req.reply({ delay: 30000, statusCode: 408 });
       }).as("timeout");
 
@@ -623,7 +626,7 @@ describe("Node Cache API GUI Tests", () => {
 
     it("should handle malformed API responses", () => {
       // Mock invalid JSON response
-      cy.intercept("GET", `${API_URL}`, {
+      cy.intercept("GET", API_BASE_URL, {
         statusCode: 200,
         body: "invalid json response",
       }).as("malformedResponse");
