@@ -4,7 +4,7 @@ export default defineConfig({
   e2e: {
     env: {
       // Set environment variables for tests
-      API_BASE_URL: "http://localhost:3000/api",
+      API_BASE_URL: "http://localhost:1312/api",
     },
     baseUrl: "https://www.chess.com",
     viewportWidth: 1280,
@@ -14,6 +14,12 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // TODO: Add custom tasks here
       // on('task', { ... })
+      on("task", {
+        log(message) {
+          console.log(message);
+          return null; // Cypress requires a return value
+        },
+      });
     },
 
     // Disable video recording for faster local development
@@ -21,5 +27,7 @@ export default defineConfig({
 
     // Keep screenshots only on failures
     screenshotOnRunFailure: true,
+    screenshotFolder: "cypress/screenshots",
+    videosFolder: "cypress/videos",
   },
 });

@@ -8,14 +8,15 @@ Cypress.Commands.add("visitUrl", (url) => {
   return cy.visit(url, { log: false, timeout: 20_000 });
 });
 
-// TODO: Implement login command
-// Cypress.Commands.add('login', (email, password) => {
-//   cy.get('#login-username').type(email);
-//   cy.get('#login-password').type(password);
-//   cy.get('#login').click();
-// });
+Cypress.Commands.add("clearAll", () => {
+  cy.clearAllCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+});
 
-// TODO: Implement cookie handling
-// Cypress.Commands.add('acceptCookies', () => {
-//   cy.get('#onetrust-reject-all-handler').click();
-// });
+Cypress.Commands.add("acceptCookies", () => {
+  cy.get("#onetrust-reject-all-handler", {
+    timeout: 10_000,
+    log: false,
+  }).click();
+});

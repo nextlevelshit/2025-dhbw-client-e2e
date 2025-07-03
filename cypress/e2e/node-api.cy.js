@@ -17,10 +17,13 @@ describe("Node Cache API GUI Tests", () => {
     cy.get("h1").should("contain", "Cache API Interface");
   });
 
-  describe("🗂️ GET Operations", () => {
-    it("should fetch all keys successfully", () => {
+  describe.only("🗂️ GET Operations", () => {
+    it.only("should fetch all keys successfully", () => {
       // Intercept the API call
       cy.intercept("GET", `${API_URL}`).as("getAllKeys");
+
+      cy.log(API_URL);
+      cy.pause({ log: false });
 
       // Click fetch all keys button
       cy.get("button").contains("Fetch All Keys").click();
@@ -29,6 +32,7 @@ describe("Node Cache API GUI Tests", () => {
       cy.wait("@getAllKeys").then(({ response }) => {
         expect(response.statusCode).to.equal(200);
         expect(response.body).to.have.property("keys");
+        expect(response.body.keys).to.be.an("array");
       });
 
       // Verify response display
@@ -51,8 +55,11 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should fetch single item successfully", () => {
-      const testKey = "test-key-123";
-      const testData = { message: "hello world", timestamp: Date.now() };
+      const testKey = "1751559870911"; // Use timestamp-style key like the real API
+      const testData = {
+        payload: "test_data_1751559870886",
+        meta: { created: "2025-07-03T16:24:30.886Z", test: true },
+      };
 
       // Mock successful single item response
       cy.intercept("GET", `${API_URL}/${testKey}`, {
@@ -71,14 +78,14 @@ describe("Node Cache API GUI Tests", () => {
         .should("be.visible")
         .and("have.class", "success")
         .and("contain", `Retrieved data for key: ${testKey}`)
-        .and("contain", "hello world");
+        .and("contain", "test_data_1751559870886");
 
       // Verify auto-population of update field
-      cy.get("#updateData").should("contain.value", "hello world");
+      cy.get("#updateData").should("contain.value", "test_data_1751559870886");
     });
 
     it("should handle key not found error", () => {
-      const nonexistentKey = "does-not-exist";
+      const nonexistentKey = "9999999999999"; // Timestamp that doesn't exist
 
       // Mock 404 response
       cy.intercept("GET", `${API_URL}/${nonexistentKey}`, {
@@ -114,7 +121,7 @@ describe("Node Cache API GUI Tests", () => {
         payload: "test creation",
         meta: { created: new Date().toISOString() },
       };
-      const generatedKey = "generated-key-456";
+      const generatedKey = Date.now().toString(); // API generates timestamp keys
 
       // Mock successful creation
       cy.intercept("POST", `${API_URL}`, {
@@ -206,7 +213,7 @@ describe("Node Cache API GUI Tests", () => {
 
   describe("✏️ UPDATE Operations", () => {
     it("should update existing item successfully", () => {
-      const testKey = "update-key-789";
+      const testKey = "1751559870911"; // Use realistic timestamp key
       const updatedData = {
         message: "updated content",
         timestamp: Date.now(),
@@ -218,7 +225,7 @@ describe("Node Cache API GUI Tests", () => {
         body: { key: testKey, data: updatedData },
       }).as("updateItem");
 
-      // Mock GET request for verification
+      // Mock GET request for verification (when GET key field matches)
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
         body: updatedData,
@@ -242,8 +249,11 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should load existing data for update", () => {
-      const testKey = "existing-key";
-      const existingData = { current: "data", id: 123 };
+      const testKey = "1751559870911";
+      const existingData = {
+        payload: "test_data_1751559870886",
+        meta: { created: "2025-07-03T16:24:30.886Z", test: true },
+      };
 
       // Mock GET request for loading
       cy.intercept("GET", `${API_URL}/${testKey}`, {
@@ -258,7 +268,7 @@ describe("Node Cache API GUI Tests", () => {
       cy.wait("@loadData");
 
       // Verify data is loaded into update field
-      cy.get("#updateData").should("contain.value", "current");
+      cy.get("#updateData").should("contain.value", "test_data_1751559870886");
       cy.get("#updateResponse")
         .should("be.visible")
         .and("have.class", "success")
@@ -266,7 +276,7 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should handle key not found on load", () => {
-      const nonexistentKey = "missing-key";
+      const nonexistentKey = "9999999999999";
 
       // Mock 404 response
       cy.intercept("GET", `${API_URL}/${nonexistentKey}`, {
@@ -294,7 +304,7 @@ describe("Node Cache API GUI Tests", () => {
         .and("contain", "Please enter a key to update");
 
       // Try to update without data
-      cy.get("#updateKey").type("some-key");
+      cy.get("#updateKey").type("1751559870911");
       cy.get("button").contains("Update Item").click();
 
       cy.get("#updateResponse")
@@ -327,7 +337,7 @@ describe("Node Cache API GUI Tests", () => {
   describe("📊 Cache Management", () => {
     it("should display cache statistics", () => {
       const mockStats = {
-        keys: ["key1", "key2", "key3"],
+        keys: ["1751559870911", "1751559870912", "1751559870913"],
       };
 
       cy.intercept("GET", `${API_URL}`, {
@@ -344,7 +354,7 @@ describe("Node Cache API GUI Tests", () => {
         .and("have.class", "success")
         .and("contain", "Cache Statistics")
         .and("contain", "Total items: 3")
-        .and("contain", "key1, key2, key3");
+        .and("contain", "1751559870911, 1751559870912, 1751559870913");
     });
 
     it("should clear cache with confirmation", () => {
@@ -391,17 +401,18 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should run comprehensive CRUD test", () => {
-      const testKey = "crud-test-key";
+      // Use realistic timestamp keys that API would generate
+      const testKey = Date.now().toString();
       const originalData = { message: "original", created: Date.now() };
       const updatedData = { message: "updated", modified: Date.now() };
 
-      // Mock CREATE
+      // Mock CREATE - API generates the key
       cy.intercept("POST", `${API_URL}`, {
         statusCode: 200,
         body: { key: testKey, data: originalData },
       }).as("crudCreate");
 
-      // Mock READ
+      // Mock READ operations
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
         body: originalData,
@@ -413,7 +424,7 @@ describe("Node Cache API GUI Tests", () => {
         body: { key: testKey, data: updatedData },
       }).as("crudUpdate");
 
-      // Mock verification READ
+      // Mock verification READ - return updated data
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
         body: updatedData,
@@ -445,7 +456,11 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should run quick comprehensive test", () => {
-      const testKey = "quick-test-key";
+      const testKey = Date.now().toString();
+      const testData = {
+        payload: "test_data_" + Date.now(),
+        meta: { created: new Date().toISOString(), test: true },
+      };
 
       // Mock initial state
       cy.intercept("GET", `${API_URL}`, {
@@ -462,7 +477,7 @@ describe("Node Cache API GUI Tests", () => {
       // Mock GET
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
-        body: { payload: "test_data_" },
+        body: testData,
       }).as("quickGet");
 
       // Mock final state
@@ -496,7 +511,7 @@ describe("Node Cache API GUI Tests", () => {
 
   describe("🔄 User Interactions", () => {
     it("should support Enter key for GET operations", () => {
-      const testKey = "enter-key-test";
+      const testKey = "1751559870911";
 
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
@@ -511,7 +526,7 @@ describe("Node Cache API GUI Tests", () => {
     });
 
     it("should support Enter key for loading update data", () => {
-      const testKey = "enter-update-test";
+      const testKey = "1751559870911";
 
       cy.intercept("GET", `${API_URL}/${testKey}`, {
         statusCode: 200,
@@ -530,7 +545,7 @@ describe("Node Cache API GUI Tests", () => {
     it("should auto-load keys on page load", () => {
       cy.intercept("GET", `${API_URL}`, {
         statusCode: 200,
-        body: { keys: ["auto-loaded-key"] },
+        body: { keys: ["1751559870911"] },
       }).as("autoLoad");
 
       // Refresh page to trigger auto-load
@@ -540,11 +555,11 @@ describe("Node Cache API GUI Tests", () => {
 
       cy.get("#keysResponse")
         .should("be.visible")
-        .and("contain", "auto-loaded-key");
+        .and("contain", "1751559870911");
     });
 
     it("should handle clickable key selection", () => {
-      const clickableKey = "clickable-key-123";
+      const clickableKey = "1751559870911";
 
       // Mock keys with clickable key
       cy.intercept("GET", `${API_URL}`, {
@@ -555,7 +570,10 @@ describe("Node Cache API GUI Tests", () => {
       // Mock GET for selected key
       cy.intercept("GET", `${API_URL}/${clickableKey}`, {
         statusCode: 200,
-        body: { selected: "data" },
+        body: {
+          payload: "test_data_1751559870886",
+          meta: { created: "2025-07-03T16:24:30.886Z", test: true },
+        },
       }).as("selectKey");
 
       // Load keys first

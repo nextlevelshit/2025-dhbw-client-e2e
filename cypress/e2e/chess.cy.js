@@ -1,13 +1,11 @@
 describe("Hacking chess.com", () => {
   beforeEach(() => {
     // Clear cookies and local storage for reproducible state
-    cy.clearAllCookies();
-    cy.clearAllLocalStorage();
-    cy.clearAllSessionStorage();
+    cy.clearAll();
     // Visit website
     cy.visit("https://www.chess.com/play/online");
     // Accecpt cookies
-    cy.get("#onetrust-reject-all-handler", { timeout: 10_000 }).click();
+    cy.acceptCookies();
   });
 
   it("Initiate new game", () => {
