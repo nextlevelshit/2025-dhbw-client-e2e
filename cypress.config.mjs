@@ -5,15 +5,18 @@ export default defineConfig({
     env: {
       // Set environment variables for tests
       API_BASE_URL: "http://localhost:1312/api",
+      GUI_URL: "https://nextlevelshit.github.io/node-cache-api/",
     },
     baseUrl: "https://www.chess.com",
     viewportWidth: 1280,
     viewportHeight: 720,
+    scrollBehavior: "center",
 
-    // Learning: Setup hooks for consistent test environment
     setupNodeEvents(on, config) {
-      // TODO: Add custom tasks here
-      // on('task', { ... })
+      // NOTE: Everything in cypress/support/commands.js can also be handled here
+      // on("uncaught:exception", () => {
+      //   return false;
+      // });
     },
 
     // Disable video recording for faster local development
