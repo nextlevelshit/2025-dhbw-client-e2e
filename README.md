@@ -21,8 +21,8 @@ cypress/
 │   ├── node-api.cy.js        # Node.js API testing
 │   └── todo.cy.js            # CRUD operations (template)
 ├── fixtures/                 # Test data and configuration
-│   ├── credentials.json
-│   └── userSettings.json
+│   ├── credentials.json      # Placeholder for auth credentials
+│   └── userSettings.json     # Placeholder for user preferences
 ├── plugins/                  # Custom Cypress plugins
 ├── support/
 │   ├── commands.js           # Custom Cypress commands
@@ -210,4 +210,4 @@ it("should handle full CRUD lifecycle", () => {
 - [ES6 Modules in Cypress](https://docs.cypress.io/guides/references/configuration#module-api)
 - [Network Interception Guide](https://docs.cypress.io/guides/guides/network-requests)
 - [Cache API Live Demo](https://nextlevelshit.github.io/node-cache-api/)
-- [Our Express API Testing Guide](../express-api-project/README.md) for comparison
+- [Our Express API Testing Guide](https://github.com/nextlevelshit/node-cache-api/README.md) for comparison
