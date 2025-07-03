@@ -25,7 +25,7 @@ cypress/
 ├── support/
 │   ├── commands.js           # Custom Cypress commands
 │   └── e2e.js                # Global setup
-└── cypress.config.js         # ES6 configuration
+└── cypress.config.mjs         # ES6 configuration
 ```
 
 ## Key Characteristics
@@ -41,7 +41,7 @@ cypress/
 ### 1. Modern ES6 Configuration
 
 ```javascript
-// cypress.config.js - ES6 style
+// cypress.config.mjs - ES6 style
 import { defineConfig } from "cypress";
 
 export default defineConfig({

@@ -1,3 +1,3 @@
-module.exports = {
-  commands: require("./commands.js"),
+export default {
+  commands: import("./commands.js"),
 };
