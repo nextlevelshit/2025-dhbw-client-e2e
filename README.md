@@ -1,7 +1,7 @@
-# Cypress E2E Testing Workshop 🎯
+# Cypress E2E Client Testing
 
 Learn modern end-to-end testing with Cypress using ES6 modules and best practices.
-This workshop follows the same architectural patterns as our [Express Cache API](../node-cache-api).
+This workshop follows the same architectural patterns as our [Express Cache API](https://github.com/nextlevelshit/node-cache-api).
 
 ## TL;DR
 
