@@ -18,7 +18,9 @@ cypress/
 ├── e2e/                      # Example test scenarios
 │   ├── calculator.cy.js      # Network interception patterns
 │   ├── chess.cy.js           # State management & cookie handling
+│   ├── musicca.cy.js         # Virtual Piano
 │   ├── node-api.cy.js        # Node.js API testing
+│   ├── patternsketch.cy.js   # Online Drum Machine Pattern Sketch
 │   └── todo.cy.js            # CRUD operations (template)
 ├── fixtures/                 # Test data and configuration
 │   ├── credentials.json      # Placeholder for auth credentials
